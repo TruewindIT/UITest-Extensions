@@ -8,6 +8,9 @@ using Xamarin.UITest;
 
 namespace Truewind.UITest.Extensions
 {
+    /// <summary>
+    /// Method Extensions for IApp interface.
+    /// </summary>
     public static class IAppExtensions
     {
         private static TimeSpan DEFAULT_TIMEOUT = new TimeSpan(0, 1, 30);
@@ -262,6 +265,50 @@ namespace Truewind.UITest.Extensions
         {
             app.Wait(selector, screenshot, screenshotTitle);
             app.Tap(x => UseXPath(selector) ? x.XPath(selector) : x.Css(selector));
+        }
+
+        /// <summary>
+        /// Returns the WebView's User Agent string
+        /// </summary>
+        /// <param name="app">The application on which the extension method is executed.</param>
+        public static string WebViewGetUserAgent(this IApp app)
+        {
+            app.WaitWebView();
+            var query = app.Query(a => a.WebView().InvokeJS("return navigator.userAgent;"));
+            return (query != null ? String.Join(Environment.NewLine, query) : null);
+        }
+
+        /// <summary>
+        /// Highlights the HTML element on the WebView by making it flash. Element must be identified by its id.
+        /// </summary>
+        /// <param name="app">The application on which the extension method is executed.</param>
+        /// <param name="htmlElementId">HTML Element Identified (attribute id).</param>
+        public static void WebViewFlashElement(this IApp app, string htmlElementId)
+        {
+            app.WaitWebView();
+            app.Query(a =>
+                a.WebView().InvokeJS(
+                    System.String.Format(@"
+var element = document.getElementById('{0}');
+element.style.visibility='hidden';
+setTimeout(function(){{
+    element.style.visibility = 'visible';
+    setTimeout(function(){{
+        element.style.visibility = 'hidden';
+        setTimeout(function(){{
+            element.style.visibility = 'visible';
+            setTimeout(function(){{
+                element.style.visibility = 'hidden';
+                setTimeout(function(){{
+                    element.style.visibility = 'visible';
+                }},({1}));
+            }},({1}));
+        }},({1}));
+    }},({1}));
+}},({1}));
+", htmlElementId, 500)
+                )
+            );
         }
     }
 }
