@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.UITest;
 
@@ -282,14 +283,20 @@ namespace Truewind.UITest.Extensions
         /// Highlights the HTML element on the WebView by making it flash. Element must be identified by its id.
         /// </summary>
         /// <param name="app">The application on which the extension method is executed.</param>
-        /// <param name="htmlElementId">HTML Element Identified (attribute id).</param>
-        public static void WebViewFlashElement(this IApp app, string htmlElementId)
+        /// <param name="selector">HTML Element Identified (attribute id) or XPath selector to specify the element to flash.</param>
+        public static void WebViewFlashElement(this IApp app, string selector)
         {
             app.WaitWebView();
+            var elementGetter = String.Format(
+                    UseXPath(selector) ?
+                        "document.evaluate('{0}', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue":
+                        "document.getElementById('{0}')",
+                    selector);
+
             app.Query(a =>
                 a.WebView().InvokeJS(
                     System.String.Format(@"
-var element = document.getElementById('{0}');
+var element = {0};
 element.style.visibility='hidden';
 setTimeout(function(){{
     element.style.visibility = 'visible';
@@ -306,9 +313,10 @@ setTimeout(function(){{
         }},({1}));
     }},({1}));
 }},({1}));
-", htmlElementId, 500)
+", elementGetter, 500)
                 )
             );
+            Thread.Sleep(2500);
         }
     }
 }
