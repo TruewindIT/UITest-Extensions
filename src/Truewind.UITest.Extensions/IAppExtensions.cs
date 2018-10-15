@@ -79,7 +79,7 @@ namespace Truewind.UITest.Extensions
             app.EnterText(x => UseXPath(selector) ? x.XPath(selector) : x.Css(selector), text);
             app.DismissKeyboard();
 
-            if (wait) app.Wait(selector, screenshot, screenshotTitle ?? $"Entered Text on {selector}");
+            if (wait) app.Wait(selector, screenshot, screenshotTitle ?? $"EnterTextAndDismissKeyboard: {selector}");
         }
         
         /// <summary>
@@ -100,7 +100,7 @@ namespace Truewind.UITest.Extensions
                 var toX = webview.Rect.CenterX;
                 var toY = (webview.Rect.Y + webview.Rect.Height) * ratioToY;
                 app.DragCoordinates(fromX, fromY, toX, toY);
-                app.ScreenshotIf(screenshot, screenshotTitle ?? $"Scrolled WebView Down");
+                app.ScreenshotIf(screenshot, screenshotTitle ?? $"ManualScroll: {ratioFromY}, {ratioToY}");
             }
         }
 
@@ -112,7 +112,7 @@ namespace Truewind.UITest.Extensions
         /// <param name="screenshotTitle"> Option to specify the screenshot title.</param>
         public static void ManualScrollDown(this IApp app, bool screenshot = false, string screenshotTitle = null)
         {
-            app.ManualScroll(0.66f, 0.33f, screenshot, screenshotTitle);
+            app.ManualScroll(0.66f, 0.33f, screenshot, screenshotTitle ?? $"ManualScrollDown");
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace Truewind.UITest.Extensions
         /// <param name="screenshotTitle">Option to specify the screenshot title.</param>
         public static void ManualScrollUp(this IApp app, bool screenshot = false, string screenshotTitle = null)
         {
-            app.ManualScroll(0.33f, 0.66f, screenshot, screenshotTitle);
+            app.ManualScroll(0.33f, 0.66f, screenshot, screenshotTitle ?? $"ManualScrollUp");
         }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace Truewind.UITest.Extensions
                 var toY = coordY;
                 var toX = (webview.Rect.X + webview.Rect.Width) * ratioToX;
                 app.DragCoordinates(fromX, fromY, toX, toY);
-                app.ScreenshotIf(screenshot, screenshotTitle ?? $"Swiped WebView");
+                app.ScreenshotIf(screenshot, screenshotTitle ?? $"ManualSwipe: {coordY}, {ratioFromX}, {ratioToX}");
             }
         }
 
@@ -165,7 +165,7 @@ namespace Truewind.UITest.Extensions
             else 
                 app.ScrollDownTo(x => UseXPath(selector) ? x.XPath(selector) : x.Css(selector), y => y.WebView(), ScrollStrategy.Gesture);
 
-            app.ScreenshotIf(screenshot, screenshotTitle ?? $"Scrolled WebView Down To {selector}");
+            app.ScreenshotIf(screenshot, screenshotTitle ?? $"ScrollWebViewDown: {selector}");
         }
 
         /// <summary>
@@ -184,7 +184,7 @@ namespace Truewind.UITest.Extensions
             else
                 app.ScrollUpTo(x => UseXPath(selector) ? x.XPath(selector) : x.Css(selector), y => y.WebView(), ScrollStrategy.Gesture);
 
-            app.ScreenshotIf(screenshot, screenshotTitle ?? $"Scrolled WebView Up To: {selector}");
+            app.ScreenshotIf(screenshot, screenshotTitle ?? $"ScrollWebViewUp: {selector}");
         }
 
         /// <summary>
@@ -197,7 +197,7 @@ namespace Truewind.UITest.Extensions
         public static void WaitWebView(this IApp app, bool screenshot = false, string screenshotTitle = null)
         {
             app.WaitForElement(a => a.WebView(), "Timed out waiting for element...", DEFAULT_TIMEOUT);
-            app.ScreenshotIf(screenshot, screenshotTitle ?? "WebView loaded");
+            app.ScreenshotIf(screenshot, screenshotTitle ?? "WaitWebView");
         }
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace Truewind.UITest.Extensions
         public static void WaitAll(this IApp app, string selector, bool screenshot = false, string screenshotTitle = null)
         {
             app.WaitForElement(x => UseXPath(selector) ? x.All().XPath(selector) : x.All().Css(selector), "Timed out waiting for element...", DEFAULT_TIMEOUT);
-            app.ScreenshotIf(screenshot, screenshotTitle ?? $"Waited: {selector}");
+            app.ScreenshotIf(screenshot, screenshotTitle ?? $"WaitAll: {selector}");
         }
 
         /// <summary>
@@ -237,7 +237,7 @@ namespace Truewind.UITest.Extensions
         public static void Wait(this IApp app, string selector, bool screenshot = false, string screenshotTitle = null)
         {
             app.WaitForElement(x => UseXPath(selector) ? x.XPath(selector) : x.Css(selector), "Timed out waiting for element...", DEFAULT_TIMEOUT);
-            app.ScreenshotIf(screenshot, screenshotTitle ?? $"Waited: {selector}");
+            app.ScreenshotIf(screenshot, screenshotTitle ?? $"Wait: {selector}");
         }
 
         /// <summary>
@@ -251,7 +251,7 @@ namespace Truewind.UITest.Extensions
         public static void WaitNo(this IApp app, string selector, bool screenshot = false, string screenshotTitle = null)
         {
             app.WaitForNoElement(x => UseXPath(selector) ? x.XPath(selector) : x.Css(selector), "Timed out waiting for no element...", DEFAULT_TIMEOUT);
-            app.ScreenshotIf(screenshot, screenshotTitle ?? $"Waited no: {selector}");
+            app.ScreenshotIf(screenshot, screenshotTitle ?? $"WaitNo: {selector}");
         }
 
         /// <summary>
@@ -264,7 +264,7 @@ namespace Truewind.UITest.Extensions
         /// <param name="screenshotTitle">Option to specify the screenshot title.</param>
         public static void WaitAndTap(this IApp app, string selector, bool screenshot = false, string screenshotTitle = null)
         {
-            app.Wait(selector, screenshot, screenshotTitle);
+            app.Wait(selector, screenshot, screenshotTitle ?? $"WaitAndTap: {selector}");
             app.Tap(x => UseXPath(selector) ? x.XPath(selector) : x.Css(selector));
         }
 
